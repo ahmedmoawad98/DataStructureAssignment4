@@ -1,0 +1,7 @@
+genres <- read.csv(file="c:\\temp\\data\\MovieCountPerGenres(whole dataset sorted).csv")
+barplot(genres$Count, names.arg = genres$Genre, main= "Movie Count Per Genre Whole Dataset Sorted",  ylab="Count",xlab= "Genres", )
+
+
+
+
+
