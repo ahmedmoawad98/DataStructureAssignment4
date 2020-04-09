@@ -20,7 +20,8 @@ import java.util.Map;
  */
 
 /**
- * @author Ahmed Moawad
+ * @author Ahmed Moawad  Assignment 4 
+ * 
  *
  */
 public class Main {
@@ -84,7 +85,7 @@ public class Main {
 		 		
 		 		for( String i: gDataSet.keySet()) {
 		 			output.write(i);
-		 			output.write(" ");
+		 			output.write(", ");
 		 			output.write(gDataSet.get(i).toString());
 					output.newLine();															
 				}
@@ -242,7 +243,7 @@ public class Main {
 			System.out.printf("%-50s %15s%n",  i , genres5Years.get(i));
 		}
 		*/
-		printHashMap(genres5Years, "F", "Movie count per genres(5 Years)", "MovieCountPerGenres(5 Years)");
+		printHashMap(genres5Years, "F", "Movie count per genres(5 Years)", "MovieCountPerGenres(5 Years).csv");
 		
 		////
 		
@@ -256,7 +257,7 @@ public class Main {
 		System.out.println();
 		System.out.println();
 		*/
-		printHashMap(genres5Years, "F", "Movie count per genres(5 Years-Sorted)", "MovieCountPerGenres(5 Years-Sorted)");// Prints to file 
+		printHashMap(genres5Years, "F", "Movie count per genres(5 Years-Sorted)", "MovieCountPerGenres(5 Years-Sorted).csv");// Prints to file 
 		
 		///////////////////////////////////////////////////////////////
 		/*prints to console
@@ -267,7 +268,7 @@ public class Main {
 			System.out.printf("%-50s %15s%n",  i , genresDataSet.get(i));
 		}	
 		*/
-		printHashMap(genresDataSet, "F", "Movie count per genres(whole dataset)", "MovieCountPerGenres(whole dataset)");// Prints to file 
+		printHashMap(genresDataSet, "F", "Movie count per genres(whole dataset)", "MovieCountPerGenres(whole dataset).csv");// Prints to file 
 		///
 		 genresDataSet = sortByValue( genresDataSet);
 		 /*prints to console
@@ -278,7 +279,7 @@ public class Main {
 		}
 		*/
 		 
-		 printHashMap(genresDataSet, "F", "Movie count per genres(whole dataset sorted)", "MovieCountPerGenres(whole dataset sorted )");// Prints to file 
+		 printHashMap(genresDataSet, "F", "Movie count per genres(whole dataset sorted)", "MovieCountPerGenres(whole dataset sorted).csv");// Prints to file 
 		////////////////////////////////////////////////////////////////////
 		
 		/*prints to console
@@ -289,7 +290,7 @@ public class Main {
 			System.out.printf("%-50s %15s%n",  i , genresByYears.get(i));
 		}
 		*/
-		 printHashMap(genresByYears, "F", "Genres by year (whole dataset unsorted)", "Genres by year (whole dataset unsorted)");
+		 printHashMap(genresByYears, "F", "Genres by year (whole dataset unsorted)", "Genres by year (whole dataset unsorted).csv");
 		///
 		genresByYears = sortByValue( genresByYears);
 		/*prints to console
@@ -299,7 +300,7 @@ public class Main {
 			System.out.printf("%-50s %15s%n",  i ,  genresByYears.get(i));	
 		}	
 		*/
-		 printHashMap(genresByYears, "F", "Genres by year (whole dataset sorted)", "Genres by year (whole dataset sorted)");
+		 printHashMap(genresByYears, "F", "Genres by year (whole dataset sorted)", "Genres by year (whole dataset sorted).csv");
 	
 		
 	}
