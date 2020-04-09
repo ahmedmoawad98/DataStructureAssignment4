@@ -1,0 +1,306 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Collections;
+import java.util.Comparator;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+/**
+ * 
+ */
+
+/**
+ * @author Ahmed Moawad
+ *
+ */
+public class Main {
+
+	/**
+	 * 
+	 */
+	private static HashMap<String, Integer> genresDataSet;
+	private static HashMap<String, Integer> genres5Years;
+	private static HashMap<String, Integer> genresByYears;
+	
+	public Main() {
+		// TODO Auto-generated constructor stub
+		
+	}
+	//
+	public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> gDataSet) {
+
+		List<Map.Entry<String, Integer> > list =
+	              new LinkedList<Map.Entry<String, Integer> >(gDataSet.entrySet());
+
+	      // Sorts the list by descending order
+	      Collections.sort(list, new Comparator<Map.Entry<String, Integer> >() {
+	          public int compare(Map.Entry<String, Integer> o1,
+	                              Map.Entry<String, Integer> o2)
+	          {
+	              return (o2.getValue()).compareTo(o1.getValue());
+	          }
+	      });
+
+	      // Reverts list back to hash map format
+	      HashMap<String, Integer> temp = new LinkedHashMap<String, Integer>();
+	      for (Map.Entry<String, Integer> aa : list) {
+	          temp.put(aa.getKey(), aa.getValue());
+	      }
+	      return temp;
+	  }
+	/////////////////////////////////////////////////////////////////////////////////
+	public static void printHashMap(HashMap<String, Integer> gDataSet, 
+			                        String target,
+			                        String sTitle,
+			                        String sFileName) {
+		
+
+		if (target == "C") {
+			System.out.println(sTitle);
+			//System.out.printf("%-50s, %15s%n",  "Genre", "count");
+			for( String i: gDataSet.keySet()) {			
+				System.out.printf("%-50s %15s%n",  i , gDataSet.get(i));
+			}
+			System.out.println();
+			System.out.println();			
+		}else {
+			// code to write output to a text file
+			 BufferedWriter output = null;
+		 	try { 
+		 		File file = new File("C:\\Temp\\Data\\" + sFileName);
+		 		output = new BufferedWriter(new FileWriter(file));
+		 		output.write("Genre,Count");
+		 		output.newLine();
+		 		
+		 		for( String i: gDataSet.keySet()) {
+		 			output.write(i);
+		 			output.write(" ");
+		 			output.write(gDataSet.get(i).toString());
+					output.newLine();															
+				}
+		 	}
+		 	catch (IOException e) {
+		 		e.printStackTrace();			 		
+		 	}
+		 	finally { 
+		 		if ( output != null) {
+		 			try {
+		 				output.close(); ;
+					} 
+		 			catch (IOException e) {
+						e.printStackTrace();
+					}
+		 		}
+		 	}
+		
+		}
+	}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String csvFileName = "C:\\temp\\Data\\HashMap\\ml-latest-small\\movies.csv";
+		// TODO Auto-generated method stub
+		// code to write output to a text file
+		BufferedReader br =null; 
+		String line = "";
+		int lineCount = 0;
+		//int RecIndex = 0;
+		//String csvSplitBy= ",";
+		//We want to match only commas that are not between parentheses. 
+		String csvSplitBy = ",(?=(?:[^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)";
+		int SkipLines= 1; 
+		
+		genresDataSet = new HashMap<String, Integer>();
+		genres5Years = new HashMap<String, Integer>();
+		genresByYears = new HashMap<String, Integer>();
+		
+		// Get current year minus 5 
+		LocalDate currentdate = LocalDate.now();  
+        int yearLessfive=currentdate.getYear() - 5;
+		
+		try { 
+			br= new BufferedReader( new FileReader(csvFileName)); 
+			while ((line= br.readLine()) !=null) {
+				lineCount++;
+				if( lineCount > SkipLines) {
+					String[] strLine = line.split(csvSplitBy, -1);
+					String movieId = strLine[0];
+					String title   = strLine[1].trim();
+					String genres  = strLine[2];
+					title = title.replaceAll("\"", "");
+					
+					// to skip the movies that don't have a release year i used a try and catch method
+					try {
+						int year = Integer.parseInt(title.substring(title.length() - 5, title.length() - 1));
+						title = title.substring(0, title.length() - 7);
+						//print the movies from the files for testing purpose
+						/*
+						System.out.print("movieId: " + movieId);
+						System.out.print(" title: "   + title);
+						System.out.print(" year: "   + year);
+						System.out.println(" genres: "  + genres);
+						*/
+						String[] genresArr = genres.split("\\|");
+						Integer v = -1;
+						
+						//
+						//Add genres to five years HashMap
+						//						
+						if (year >= yearLessfive) {
+							for (String g : genresArr) {
+								if (genres5Years.isEmpty()){
+									genres5Years.put(g, 1);
+								}
+								else {
+																	
+										v = genres5Years.get(g);
+										if (v != null) {
+											genres5Years.put(g, ++v);									
+										}									
+										else {
+											genres5Years.put(g, 1);
+										}																
+								}
+							}
+						}
+						
+						//
+						// Add genres to full data set HashMap
+						//
+						v = -1;						
+						for (String g : genresArr) {
+							if (genresDataSet.isEmpty()){
+								genresDataSet.put(g, 1);
+							}
+							else {							
+									v = genresDataSet.get(g);
+									if (v != null) {
+										genresDataSet.put(g, ++v);									
+									}									
+									else {
+										genresDataSet.put(g, 1);
+									}	
+							}
+						}
+						//
+						// Add genres by year
+						//
+						v = -1;						
+						for (String g : genresArr) {
+							String s = String.valueOf(year) + "-" + g ;
+							if (genresByYears.isEmpty()){
+								genresByYears.put(s, 1);
+							}
+							else {							
+									v = genresByYears.get(s);
+									if (v != null) {
+										genresByYears.put(s, ++v);									
+									}									
+									else {
+										genresByYears.put(s, 1);
+									}	
+							}
+						}
+						
+					}catch(Exception e){
+						//e.printStackTrace();
+			 		}			
+				}
+			}
+		}catch(FileNotFoundException e ){ 
+			e.printStackTrace();
+		}catch (IOException e) {
+			e.printStackTrace();
+		}finally {
+			if (br !=null) {
+				try {
+					br.close();
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		////////////////////////////////////////////////////////////////
+		/*
+		System.out.println("Movie count per genres(5 Years) ");
+		System.out.printf("%-50s, %15s%n",  "Genre", "count");
+		//print 5 year HashMap 
+		for( String i: genres5Years.keySet()) {			
+			System.out.printf("%-50s %15s%n",  i , genres5Years.get(i));
+		}
+		*/
+		printHashMap(genres5Years, "F", "Movie count per genres(5 Years)", "MovieCountPerGenres(5 Years)");
+		
+		////
+		
+		genres5Years = sortByValue(genres5Years);
+		/* prints to console
+		System.out.println("Movie count per genres(5 Years - Sorted) "); 
+		System.out.printf("%-50s, %15s%n",  "Genre", "count");
+		for( String i: genres5Years.keySet()) {			
+		System.out.printf("%-50s %15s%n",  i , genres5Years.get(i));
+		}
+		System.out.println();
+		System.out.println();
+		*/
+		printHashMap(genres5Years, "F", "Movie count per genres(5 Years-Sorted)", "MovieCountPerGenres(5 Years-Sorted)");// Prints to file 
+		
+		///////////////////////////////////////////////////////////////
+		/*prints to console
+		System.out.println("Movies count per genres (whole dataset)");		
+		System.out.printf("%-50s, %15s%n",  "Genre", "count");
+		// print the Genres HashMap
+		for (String i :  genresDataSet.keySet()) {
+			System.out.printf("%-50s %15s%n",  i , genresDataSet.get(i));
+		}	
+		*/
+		printHashMap(genresDataSet, "F", "Movie count per genres(whole dataset)", "MovieCountPerGenres(whole dataset)");// Prints to file 
+		///
+		 genresDataSet = sortByValue( genresDataSet);
+		 /*prints to console
+		System.out.println("Movie count per genres(whole dataset sorted) ");
+		System.out.printf("%-50s, %15s%n",  "Genre", "count");
+		for( String i:  genresDataSet.keySet()) {			
+			System.out.printf("%-50s %15s%n",  i ,  genresDataSet.get(i));
+		}
+		*/
+		 
+		 printHashMap(genresDataSet, "F", "Movie count per genres(whole dataset sorted)", "MovieCountPerGenres(whole dataset sorted )");// Prints to file 
+		////////////////////////////////////////////////////////////////////
+		
+		/*prints to console
+		System.out.println("Genres by year (whole dataset unsorted)");		
+		System.out.printf("%-50s, %15s%n",  "Genre", "count");
+		// print the Genres HashMap
+		for (String i :  genresByYears.keySet()) {
+			System.out.printf("%-50s %15s%n",  i , genresByYears.get(i));
+		}
+		*/
+		 printHashMap(genresByYears, "F", "Genres by year (whole dataset unsorted)", "Genres by year (whole dataset unsorted)");
+		///
+		genresByYears = sortByValue( genresByYears);
+		/*prints to console
+		System.out.println("Genres by year (whole dataset sorted) ");
+		System.out.printf("%-50s, %15s%n",  "Genre", "count");
+		for( String i:  genresByYears.keySet()) {			
+			System.out.printf("%-50s %15s%n",  i ,  genresByYears.get(i));	
+		}	
+		*/
+		 printHashMap(genresByYears, "F", "Genres by year (whole dataset sorted)", "Genres by year (whole dataset sorted)");
+	
+		
+	}
+}
